@@ -9,6 +9,7 @@ const { errorHandler } = require("./middlewares/error-handler");
 const { createloanRouter } = require("./routes/createloan-route");
 const { getloansRouter } = require("./routes/getloans-route");
 const { saveLoans } = require("./controllers/saveloans");
+const { updateLoans } = require("./controllers/updatedLoans");
 
 amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
   if (error0) {
@@ -72,6 +73,17 @@ amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
         console.log("Asserted 'loan_created' queue");
 
         channel.consume("loan_created", saveLoans, { noAck: false });
+      });
+
+      channel.assertQueue("loan_updated", { durable: true }, (error) => {
+        if (error) {
+          console.error("Queue assertion error:", error);
+          return;
+        }
+
+        console.log("Asserted 'loan_updated' queue");
+
+        channel.consume("loan_updated", updateLoans, { noAck: false });
       });
 
       app.listen(PORT, () => {

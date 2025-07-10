@@ -9,7 +9,7 @@ require("dotenv").config();
 const { getloansRouter } = require("./routes/get-loans-route");
 const { reviewLoanRouter } = require("./routes/review-loan-route");
 const { NotFoundError } = require("./errors/not-found-error");
-const errorHandler = require("./middlewares/error-handler");
+const { errorHandler } = require("./middlewares/error-handler");
 const loanCreated = require("./controllers/loan-created");
 
 amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
@@ -107,6 +107,7 @@ amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
         });
         throw err;
       }
+
       logger.info("Setting up RabbitMQ queues...");
 
       channel.assertQueue("loan_created", { durable: true }, (error) => {

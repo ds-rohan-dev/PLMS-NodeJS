@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const amqp = require("amqplib/callback_api");
+const logger = require("./utils/logger");
+
 require("dotenv").config();
 
 const { NotFoundError } = require("./errors/not-found-error");
@@ -13,11 +15,23 @@ const { updateLoans } = require("./controllers/updatedLoans");
 
 amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
   if (error0) {
+    logger.error("Failed to connect to RabbitMQ", {
+      error: error0.message,
+      stack: error0.stack,
+      amqpUrl: process.env.AMQP_CONNECT,
+    });
+
     throw error0;
   }
 
+  logger.info("Connected to RabbitMQ successfully");
+
   connection.createChannel((error1, channel) => {
     if (error1) {
+      logger.error("Failed to create RabbitMQ channel", {
+        error: error1.message,
+        stack: error1.stack,
+      });
       throw error1;
     }
 

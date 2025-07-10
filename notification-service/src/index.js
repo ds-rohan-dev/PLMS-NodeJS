@@ -7,7 +7,7 @@ const logger = require("./utils/logger");
 require("dotenv").config();
 
 const { NotFoundError } = require("./errors/not-found-error");
-const errorHandler = require("./middlewares/error-handler");
+const { errorHandler } = require("./middlewares/error-handler");
 const { getNotificationsRouter } = require("./routes/get-notifications-route");
 const { markReadRouter } = require("./routes/mark-read-route");
 const loanUpdated = require("./controllers/loan-updated");

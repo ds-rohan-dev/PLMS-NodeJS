@@ -1,8 +1,14 @@
 const { Notification } = require("../models/notification");
+const logger = require("../utils/logger");
 
 const loanUpdated = async (msg, channel) => {
+  const eventId = Date.now().toString();
+
   try {
-    console.log("\n[New Log]:");
+    logger.info(`[${eventId}] Processing loan updated event`, {
+      queue: "loan_updated",
+      eventId,
+    });
 
     const eventData = JSON.parse(msg.content.toString());
 

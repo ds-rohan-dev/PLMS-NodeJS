@@ -19,6 +19,7 @@ amqp.connect("amqp://localhost", function (error0, connection) {
     if (error1) {
       throw error1;
     }
+    logger.info("Connected to RabbitMQ");
 
     const app = express();
 
@@ -59,7 +60,7 @@ amqp.connect("amqp://localhost", function (error0, connection) {
 
       try {
         await mongoose.connect("mongodb://localhost:27017/PLMS-auth");
-        console.log("Connected to MongoDB :]");
+        logger.info("Connected to MongoDB :]");
       } catch (err) {
         console.log(err);
       }

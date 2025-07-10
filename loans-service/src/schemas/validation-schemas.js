@@ -8,7 +8,7 @@ const createloanSchema = z.object({
       message: "Invalid date format",
     }),
     profileURL: z.string().url("Invalid profile URL"),
-    gender: z.enum(["male", "female", "prefer not to say"], {
+    gender: z.enum(["male", "female", "prefer-not-to-say"], {
       errorMap: () => ({ message: "Invalid gender value" }),
     }),
     employer: z.string().min(1, "Employer is required").trim(),

@@ -45,7 +45,6 @@ const signin = async (req, res) => {
       dob: existingUser.dob || "",
       profileURL: existingUser.profileURL || "/image.webp",
       gender: existingUser.gender || "other",
-      customGender: existingUser.customGender || "",
       employer: existingUser.employer || "",
       monthlySalary: existingUser.monthlySalary || 0,
       creditScore: existingUser.creditScore || 0,

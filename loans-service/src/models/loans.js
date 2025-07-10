@@ -22,7 +22,7 @@ const loanSchema = new mongoose.Schema(
       gender: {
         type: String,
         required: true,
-        enum: ["male", "female", "prefer not to say"],
+        enum: ["male", "female", "prefer-not-to-say"],
       },
       employer: {
         type: String,

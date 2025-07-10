@@ -5,7 +5,7 @@ const logger = require("../utils/logger");
 
 const markNotificationRead = async (req, res) => {
   const requestId = Date.now().toString();
-
+  const { isRead } = req.query;
   const notificationId = req.params.id;
   const { role, id: currentUserId } = req.currentUser;
 
@@ -26,7 +26,6 @@ const markNotificationRead = async (req, res) => {
         requestId,
       }
     );
-
     throw new BadRequestError("Authentication required");
   }
 
@@ -37,7 +36,6 @@ const markNotificationRead = async (req, res) => {
       notificationId,
       requestId,
     });
-
     throw new BadRequestError(
       "Only customers and managers can mark notifications as read"
     );
@@ -64,7 +62,6 @@ const markNotificationRead = async (req, res) => {
         userId: currentUserId,
         requestId,
       });
-
       throw new NotFoundError("Notification not found!");
     }
 
@@ -77,19 +74,12 @@ const markNotificationRead = async (req, res) => {
       requestId,
     });
 
+    // Check permissions
     let hasPermission = false;
     if (notification.role === "manager" && role === "manager") {
       hasPermission = true;
     } else if (notification.userid === currentUserId) {
       hasPermission = true;
-    }
-
-    if (notification.isRead) {
-      console.log("Notification is already marked as read!");
-      return res.status(200).send({
-        success: [{ message: "Notification is already marked as read!" }],
-        notification,
-      });
     }
 
     if (!hasPermission) {

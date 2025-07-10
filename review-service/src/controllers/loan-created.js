@@ -5,39 +5,42 @@ const loanCreated = async (msg, channel) => {
   const eventId = Date.now().toString();
 
   try {
-    logger.info(`[${eventId}] Processing loan created event`, {
+    logger.info(`[${eventId}] Processing loan created event for review`, {
       queue: "loan_created",
       eventId,
     });
 
     const eventLoan = JSON.parse(msg.content.toString());
 
-    const { loan } = eventLoan;
-
     logger.debug(`[${eventId}] Parsed loan created event data`, {
-      loanId: loan.id,
-      eventData,
+      loanId: eventLoan.loan?.id,
       eventId,
     });
 
-    logger.debug(`[${eventId}] Checking for existing loan`, {
+    const { loan } = eventLoan;
+
+    logger.debug(`[${eventId}] Checking for existing review`, {
       loanId: loan.id,
-      type: "loan_created",
-      role: "manager",
       eventId,
     });
 
     const existingReview = await Review.findById(loan.id);
 
     if (existingReview) {
-      logger.warn(`[${eventId}] Duplicate loan detected`, {
+      logger.warn(`[${eventId}] Review data already exists`, {
         loanId: loan.id,
-        existingNotificationId: existingNotification.id,
         eventId,
       });
       channel.ack(msg);
       return;
     }
+
+    logger.debug(`[${eventId}] Creating new review record`, {
+      loanId: loan.id,
+      userId: loan.userid,
+      bankId: loan.bankId,
+      eventId,
+    });
 
     const newReview = new Review({
       _id: loan.id,
@@ -46,15 +49,19 @@ const loanCreated = async (msg, channel) => {
 
     await newReview.save();
 
-    logger.info(`[${eventId}] loan data saved successfully`, {
+    logger.info(`[${eventId}] New review data saved successfully`, {
       loanId: loan.id,
-      notificationId: newNotification.id,
+      userId: loan.userid,
+      bankId: loan.bankId,
+      bankName: loan.bankName,
+      appliedLoanAmount: loan.appliedLoanAmount,
+      status: loan.status,
       eventId,
     });
 
     channel.ack(msg);
   } catch (err) {
-    logger.error(`[${eventId}] Error processing loan data`, {
+    logger.error(`[${eventId}] Error in loan created review process`, {
       error: err.message,
       stack: err.stack,
       messageContent: msg.content.toString(),

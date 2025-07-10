@@ -108,6 +108,7 @@ amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
         });
         throw err;
       }
+
       logger.info("Setting up RabbitMQ queues...");
 
       channel.assertQueue("loan_updated", { durable: true }, (error) => {

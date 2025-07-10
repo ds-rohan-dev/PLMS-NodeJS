@@ -58,44 +58,104 @@ amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
       }
 
       try {
-        await mongoose.connect("mongodb://localhost:27017/PLMS-Loans");
-        console.log("Connected to MongoDB :]");
+        logger.info("Connecting to MongoDB...");
+        await mongoose.connect(
+          process.env.MONGODB_URI ||
+            "mongodb://localhost:27017/PLMS-Notification"
+        );
+        logger.info("Connected to MongoDB successfully", {
+          database: "PLMS-Notification",
+        });
       } catch (err) {
-        console.log(err);
+        logger.error("Failed to connect to MongoDB", {
+          error: err.message,
+          stack: err.stack,
+        });
+        throw err;
       }
+
+      logger.info("Setting up RabbitMQ queues...");
 
       channel.assertQueue("loan_created", { durable: true }, (error) => {
         if (error) {
-          console.error("Queue assertion error:", error);
+          logger.error("Failed to assert loan_updated queue", {
+            error: error.message,
+            stack: error.stack,
+          });
           return;
         }
 
-        console.log("Asserted 'loan_created' queue");
+        logger.info("loan_updated queue asserted successfully");
 
-        channel.consume("loan_created", saveLoans, { noAck: false });
+        channel.consume(
+          "loan_created",
+          (msg) => {
+            saveLoans(msg, channel);
+          },
+          { noAck: false }
+        );
+
+        logger.info("Started consuming loan_updated queue");
       });
 
       channel.assertQueue("loan_updated", { durable: true }, (error) => {
         if (error) {
-          console.error("Queue assertion error:", error);
+          logger.error("Failed to assert loan_created queue", {
+            error: error.message,
+            stack: error.stack,
+          });
           return;
         }
 
-        console.log("Asserted 'loan_updated' queue");
+        logger.info("loan_created queue asserted successfully");
 
-        channel.consume("loan_updated", updateLoans, { noAck: false });
+        channel.consume(
+          "loan_updated",
+          (msg) => {
+            updateLoans(msg, channel);
+          },
+          { noAck: false }
+        );
+
+        logger.info("Started consuming loan_created queue");
       });
 
       app.listen(PORT, () => {
-        console.log("Listening on port 8003");
+        logger.info("Notification service is running", {
+          port: PORT,
+          environment: process.env.NODE_ENV || "development",
+        });
       });
     };
 
-    start();
+    start().catch((err) => {
+      logger.error("Failed to start notification service", {
+        error: err.message,
+        stack: err.stack,
+      });
+      process.exit(1);
+    });
 
     process.on("beforeExit", () => {
-      console.log("Closing Connection to RabbitMQ!");
+      logger.info("Shutting down notification service...");
+      logger.info("Closing RabbitMQ connection...");
       connection.close();
     });
   });
+});
+
+process.on("uncaughtException", (err) => {
+  logger.error("Uncaught Exception", {
+    error: err.message,
+    stack: err.stack,
+  });
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (err) => {
+  logger.error("Unhandled Rejection", {
+    error: err.message,
+    stack: err.stack,
+  });
+  process.exit(1);
 });

@@ -1,0 +1,85 @@
+http:
+  port: 8000
+
+apiEndpoints:
+  banks:
+    host: localhost
+    paths: "/bank/*"
+  user:
+    host: localhost
+    paths: "/user/*"
+  loan:
+    host: localhost
+    paths: "/loan/*"
+  review:
+    host: localhost
+    paths: "/review/*"
+  notification:
+    host: localhost
+    paths: "/notification/*"
+
+serviceEndpoints:
+  bank-service:
+    url: "http://localhost:8002/api/banks"
+  auth-service:
+    url: "http://localhost:8001/api/users"
+  loan-service:
+    url: "http://localhost:8003/api/loans"
+  review-service:
+    url: "http://localhost:8004/api/review"
+  notification-service:
+    url: "http://localhost:8005/api/notifications"
+
+policies:
+  - proxy
+
+pipelines:
+  bank-pipeline:
+    apiEndpoints:
+      - banks
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: bank-service
+              changeOrigin: true
+              stripPath: true
+
+  auth-pipeline:
+    apiEndpoints:
+      - user
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: auth-service
+              changeOrigin: true
+              stripPath: true
+
+  loan-pipeline:
+    apiEndpoints:
+      - loan
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: loan-service
+              changeOrigin: true
+              stripPath: true
+
+  review-pipeline:
+    apiEndpoints:
+      - review
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: review-service
+              changeOrigin: true
+              stripPath: true
+
+  notification-pipeline:
+    apiEndpoints:
+      - notification
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: notification-service
+              changeOrigin: true
+              stripPath: true

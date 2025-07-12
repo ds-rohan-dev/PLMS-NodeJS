@@ -94,11 +94,10 @@ amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
       try {
         logger.info("Connecting to MongoDB...");
         await mongoose.connect(
-          process.env.MONGODB_URI ||
-            "mongodb://localhost:27017/PLMS-Notification"
+          process.env.MONGODB_URI || "mongodb://localhost:27017/PLMS-Review"
         );
         logger.info("Connected to MongoDB successfully", {
-          database: "PLMS-Notification",
+          database: "PLMS-Review",
         });
       } catch (err) {
         logger.error("Failed to connect to MongoDB", {
@@ -133,14 +132,14 @@ amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
       });
 
       app.listen(PORT, () => {
-        logger.info("Notification service is running", {
+        logger.info("Review service is running", {
           port: PORT,
           environment: process.env.NODE_ENV || "development",
         });
       });
     };
     start().catch((err) => {
-      logger.error("Failed to start notification service", {
+      logger.error("Failed to start review service", {
         error: err.message,
         stack: err.stack,
       });
@@ -148,7 +147,7 @@ amqp.connect(process.env.AMQP_CONNECT, (error0, connection) => {
     });
 
     process.on("beforeExit", () => {
-      logger.info("Shutting down notification service...");
+      logger.info("Shutting down review service...");
       logger.info("Closing RabbitMQ connection...");
       connection.close();
     });

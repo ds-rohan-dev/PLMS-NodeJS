@@ -1,0 +1,50 @@
+{
+  "db": {
+    "redis": {
+      "host": "localhost",
+      "port": 6379,
+      "namespace": "EG"
+    }
+  },
+  "models": {
+    "users": {
+      "properties": {
+        "id": {
+          "isRequired": true,
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "credentials": {
+      "properties": {
+        "id": {
+          "isRequired": true,
+          "type": "string"
+        },
+        "secret": {
+          "type": "string"
+        }
+      }
+    },
+    "applications": {
+      "properties": {
+        "id": {
+          "isRequired": true,
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

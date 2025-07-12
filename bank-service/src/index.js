@@ -69,13 +69,6 @@ const start = async () => {
     logger.info("Connected to MongoDB successfully", {
       database: "PLMS-Bank",
     });
-
-    app.listen(PORT, () => {
-      logger.info(`Bank service is running`, {
-        port: PORT,
-        environment: process.env.NODE_ENV || "development",
-      });
-    });
   } catch (err) {
     logger.error("Failed to start bank service", {
       error: err.message,
@@ -85,7 +78,7 @@ const start = async () => {
   }
 
   app.listen(PORT, () => {
-    logger.info("Notification service is running", {
+    logger.info(`Bank service is running at ${PORT}`, {
       port: PORT,
       environment: process.env.NODE_ENV || "development",
     });
@@ -93,7 +86,7 @@ const start = async () => {
 };
 
 start().catch((err) => {
-  logger.error("Failed to start notification service", {
+  logger.error("Failed to start bank service", {
     error: err.message,
     stack: err.stack,
   });

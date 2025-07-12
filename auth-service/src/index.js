@@ -95,11 +95,10 @@ amqp.connect(process.env.AMQP_CONNECT, function (error0, connection) {
       try {
         logger.info("Connecting to MongoDB...");
         await mongoose.connect(
-          process.env.MONGODB_URI ||
-            "mongodb://localhost:27017/PLMS-Notification"
+          process.env.MONGODB_URI || "mongodb://localhost:27017/PLMS-Auth"
         );
         logger.info("Connected to MongoDB successfully", {
-          database: "PLMS-Notification",
+          database: "PLMS-Auth",
         });
       } catch (err) {
         logger.error("Failed to connect to MongoDB", {
@@ -129,7 +128,7 @@ amqp.connect(process.env.AMQP_CONNECT, function (error0, connection) {
       });
 
       app.listen(PORT, () => {
-        logger.info("Notification service is running", {
+        logger.info("Auth service is running", {
           port: PORT,
           environment: process.env.NODE_ENV || "development",
         });
@@ -137,7 +136,7 @@ amqp.connect(process.env.AMQP_CONNECT, function (error0, connection) {
     };
 
     start().catch((err) => {
-      logger.error("Failed to start notification service", {
+      logger.error("Failed to start auth service", {
         error: err.message,
         stack: err.stack,
       });

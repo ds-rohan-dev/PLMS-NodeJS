@@ -95,7 +95,7 @@ amqp.connect(process.env.AMQP_CONNECT, function (error0, connection) {
       try {
         logger.info("Connecting to MongoDB...");
         await mongoose.connect(
-          process.env.MONGODB_URI || "mongodb://localhost:27017/PLMS-Auth"
+          process.env.MONGODB_URI || "mongodb://localhost:27017/PLMS-auth"
         );
         logger.info("Connected to MongoDB successfully", {
           database: "PLMS-Auth",

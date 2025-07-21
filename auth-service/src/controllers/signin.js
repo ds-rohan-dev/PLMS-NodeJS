@@ -27,6 +27,8 @@ const signin = async (req, res) => {
       requestId,
     });
 
+    const existingUser = await User.findOne({ email });
+
     if (!existingUser) {
       logger.warn(`[${requestId}] Signin failed - email not found`, {
         email,

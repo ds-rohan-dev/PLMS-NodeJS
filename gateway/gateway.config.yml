@@ -4,19 +4,19 @@ http:
 apiEndpoints:
   banks:
     host: localhost
-    paths: "/bank/*"
+    paths: "/api/bank/*"
   user:
     host: localhost
-    paths: "/user/*"
+    paths: "/api/users/*"
   loan:
     host: localhost
-    paths: "/loan/*"
+    paths: "/api/loans/*"
   review:
     host: localhost
-    paths: "/review/*"
+    paths: "/api/review/*"
   notification:
     host: localhost
-    paths: "/notification/*"
+    paths: "/api/notifications/*"
 
 serviceEndpoints:
   bank-service:
@@ -46,7 +46,7 @@ pipelines:
               rateLimitBy: "${req.ip}"
               skipSuccessfulRequests: false
               skipFailedRequests: false
-              message: "Too many requests from this IP for review service"
+              message: "Too many requests from this IP for bank service"
       - proxy:
           - action:
               serviceEndpoint: bank-service
@@ -64,7 +64,7 @@ pipelines:
               rateLimitBy: "${req.ip}"
               skipSuccessfulRequests: false
               skipFailedRequests: false
-              message: "Too many requests from this IP for review service"
+              message: "Too many requests from this IP for auth service"
       - proxy:
           - action:
               serviceEndpoint: auth-service
@@ -82,7 +82,7 @@ pipelines:
               rateLimitBy: "${req.ip}"
               skipSuccessfulRequests: false
               skipFailedRequests: false
-              message: "Too many requests from this IP for review service"
+              message: "Too many requests from this IP for loan service"
       - proxy:
           - action:
               serviceEndpoint: loan-service
@@ -118,7 +118,7 @@ pipelines:
               rateLimitBy: "${req.ip}"
               skipSuccessfulRequests: false
               skipFailedRequests: false
-              message: "Too many requests from this IP for review service"
+              message: "Too many requests from this IP for notification service"
       - proxy:
           - action:
               serviceEndpoint: notification-service
